@@ -79,6 +79,16 @@ func (ur *UserRepository) GetUserByID(id string) (model.User, error) {
 	return user, nil
 }
 
+// get a specific user by email
+func (ur *UserRepository) GetUserByEmail(email string) (model.User, error) {
+	var user model.User
+	err := ur.collection.FindOne(context.TODO(), bson.M{"email": email}).Decode(&user)
+	if err != nil {
+		return model.User{}, err
+	}
+	return user, nil
+}
+
 // update a specifc user by id
 func (ur *UserRepository) UpdateUser(id string, user model.User) (bool, error) {
 	objectId, err := primitive.ObjectIDFromHex(id)

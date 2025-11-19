@@ -84,3 +84,17 @@ func (s *UserService) DeleteAllUsers() (int64, error) {
 	}
 	return count, nil
 }
+
+// login validatio of user
+func (s *UserService) Login(email, password string) (*model.User, error) {
+	user, err := s.repository.GetUserByEmail(email)
+	if err != nil {
+		return nil, errors.New("invalid email or password")
+	}
+
+	if user.Password != password {
+		return nil, errors.New("invalid email or password")
+	}
+
+	return &user, nil
+}
