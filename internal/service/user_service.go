@@ -30,3 +30,21 @@ func (s *UserService) CreateUser(user model.User) (*model.User, error) {
 	}
 	return &user, nil
 }
+
+// get all users
+func (s *UserService) GetAllUsers() ([]model.User, error) {
+	users, err := s.repository.GetAllUsers()
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
+// get a specifc user by id
+func (s *UserService) GetUserByID(id string) (*model.User, error) {
+	user, err := s.repository.GetUserByID(id)
+	if err != nil {
+		return nil, errors.New("user not found with id: " + id)
+	}
+	return &user, nil
+}

@@ -10,6 +10,8 @@ func Router(handler *handler.UserHandler) *mux.Router {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/users", handler.CreateUser).Methods("POST")
+	router.HandleFunc("/api/users/all", handler.GetAllUsers).Methods("GET")
+	router.HandleFunc("/api/users/{id}", handler.GetUserByID).Methods("GET")
 
 	return router
 }
