@@ -91,3 +91,25 @@ func (ur *UserRepository) UpdateUser(id string, user model.User) (bool, error) {
 	}
 	return result.ModifiedCount > 0, nil
 }
+
+// delete a specifc user by id
+func (ur *UserRepository) DeleteUser(id string) (bool, error) {
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return false, err
+	}
+	_, err = ur.collection.DeleteOne(context.TODO(), bson.M{"_id": oid})
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// delete all users
+func (ur *UserRepository) DeleteAllUsers() (int64, error) {
+	result, err := ur.collection.DeleteMany(context.TODO(), bson.D{{}})
+	if err != nil {
+		return 0, err
+	}
+	return result.DeletedCount, nil
+}

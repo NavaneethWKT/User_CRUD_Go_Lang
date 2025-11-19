@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/NavaneethWKT/CRUD-Go-lang/internal/model"
 	"github.com/NavaneethWKT/CRUD-Go-lang/internal/service"
@@ -96,4 +97,36 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("User updated successfully:", id)
 	json.NewEncoder(w).Encode("User updated successfully")
+}
+
+// delete a specifc user by id
+func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	id := params["id"]
+	err := h.service.DeleteUser(id)
+	if err != nil {
+		if err.Error() == "user not found with id: "+id {
+			w.WriteHeader(http.StatusNotFound)
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+		json.NewEncoder(w).Encode(err.Error())
+		return
+	}
+	fmt.Println("User deleted successfully:", id)
+	json.NewEncoder(w).Encode("User deleted successfully")
+}
+
+// delete all users
+func (h *UserHandler) DeleteAllUsers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	count, err := h.service.DeleteAllUsers()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode("Error deleting users: " + err.Error())
+		return
+	}
+	fmt.Println("All users deleted, count:", count)
+	json.NewEncoder(w).Encode("All users deleted, count: " + strconv.FormatInt(count, 10))
 }

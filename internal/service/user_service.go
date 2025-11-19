@@ -63,3 +63,24 @@ func (s *UserService) UpdateUser(id string, user model.User) error {
 	}
 	return nil
 }
+
+// delete a specifc user by id
+func (s *UserService) DeleteUser(id string) error {
+	success, err := s.repository.DeleteUser(id)
+	if err != nil {
+		return err
+	}
+	if !success {
+		return errors.New("user not found with id: " + id)
+	}
+	return nil
+}
+
+// delete all users
+func (s *UserService) DeleteAllUsers() (int64, error) {
+	count, err := s.repository.DeleteAllUsers()
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
