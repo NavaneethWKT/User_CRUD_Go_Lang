@@ -68,3 +68,32 @@ func (h *UserHandler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Get user by ID:", id)
 	json.NewEncoder(w).Encode(user)
 }
+
+// update a specifc user by id
+func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	id := params["id"]
+	if r.Body == nil {
+		json.NewEncoder(w).Encode("Please send some data")
+		return
+	}
+	defer r.Body.Close()
+	var user model.User
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		json.NewEncoder(w).Encode("Invalid JSON")
+		return
+	}
+	err := h.service.UpdateUser(id, user)
+	if err != nil {
+		if err.Error() == "user not found with id: "+id {
+			w.WriteHeader(http.StatusNotFound)
+		} else {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+		json.NewEncoder(w).Encode(err.Error())
+		return
+	}
+	fmt.Println("User updated successfully:", id)
+	json.NewEncoder(w).Encode("User updated successfully")
+}

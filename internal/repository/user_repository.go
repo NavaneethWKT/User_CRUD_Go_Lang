@@ -78,3 +78,16 @@ func (ur *UserRepository) GetUserByID(id string) (model.User, error) {
 	}
 	return user, nil
 }
+
+// update a specifc user by id
+func (ur *UserRepository) UpdateUser(id string, user model.User) (bool, error) {
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return false, err
+	}
+	result, err := ur.collection.UpdateOne(context.TODO(), bson.M{"_id": objectId}, bson.M{"$set": user})
+	if err != nil {
+		return false, err
+	}
+	return result.ModifiedCount > 0, nil
+}

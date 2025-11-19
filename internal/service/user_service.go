@@ -48,3 +48,18 @@ func (s *UserService) GetUserByID(id string) (*model.User, error) {
 	}
 	return &user, nil
 }
+
+// update a specifc user by id
+func (s *UserService) UpdateUser(id string, user model.User) error {
+	if user.Name == "" && user.Email == "" && user.Password == "" {
+		return errors.New("at least one field must be provided for update")
+	}
+	success, err := s.repository.UpdateUser(id, user)
+	if err != nil {
+		return err
+	}
+	if !success {
+		return errors.New("user not found with id: " + id)
+	}
+	return nil
+}
